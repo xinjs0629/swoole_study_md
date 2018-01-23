@@ -1,6 +1,6 @@
 ## Server的生命周期
 
-![image](./1.png)
+![image](./pic/1.png)
 
 ### 生命周期的开始--构建Server对象
 
@@ -36,4 +36,4 @@ $serv->master_pid;  //主进程的PID，通过向主进程发送SIGTERM信号可
 $serv->connections; //当前服务器的客户端连接，可使用foreach遍历所有连接
 ````
 
-![image](./2.png)
+![image](./pic/2.png)
