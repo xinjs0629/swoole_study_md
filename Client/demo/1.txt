@@ -1,0 +1,8 @@
+swoole_client::__construct
+函数原型：
+swoole_client->__construct(int $sock_type, int $is_sync = SWOOLE_SOCK_SYNC, string $key);
+可以使用swoole提供的宏来之指定类型:
+$sock_type表示socket的类型，如TCP/UDP
+使用$sock_type | SWOOLE_SSL可以启用SSL加密
+$is_sync表示同步阻塞还是异步非阻塞，默认为同步阻塞
+$key用于长连接的Key，默认使用IP:PORT作为key。相同key的连接会被复用
