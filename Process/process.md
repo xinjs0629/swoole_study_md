@@ -107,3 +107,52 @@ swoole_process提供了如下特性：
     }
 });
 ```
+
+# swoole_process::kill
+向指定pid进程发送信号
+```php
+bool swoole_process::kill($pid, $signo = SIGTERM);
+```
+* 默认的信号为SIGTERM，表示终止进程
+* $signo=0，可以检测进程是否存在，不会发送信号
+
+僵尸进程
+----
+子进程退出后，父进程务必要执行swoole_process::wait进行回收，否则这个子进程就会变为僵尸进程。会浪费操作系统的进程资源。
+
+父进程可以设置监听SIGCHLD信号，收到信号后执行swoole_process::wait回收退出的子进程。
+
+# swoole_process::wait
+
+回收结束运行的子进程。
+
+```php
+array swoole_process::wait(bool $blocking = true);
+$result = array('code' => 0, 'pid' => 15001, 'signal' => 15);
+```
+
+* $blocking 参数可以指定是否阻塞等待，默认为阻塞
+* 操作成功会返回返回一个数组包含子进程的PID、退出状态码、被哪种信号KILL
+* 失败返回false
+
+> 子进程结束必须要执行wait进行回收，否则子进程会变成僵尸进程
+
+> $blocking 仅在1.7.10以上版本可用
+
+>使用swoole_process作为监控父进程，创建管理子process时，父类必须注册信号SIGCHLD对退出的进程执行wait，否则子process一旦被kill会引起父process exit
+
+在异步信号回调中执行wait
+-----
+```php
+swoole_process::signal(SIGCHLD, function($sig) {
+  //必须为false，非阻塞模式
+  while($ret =  swoole_process::wait(false)) {
+      echo "PID={$ret['pid']}\n";
+  }
+});
+```
+* 信号发生时可能同时有多个子进程退出
+* 必须循环执行wait直到返回false
+
+
+
